@@ -1,0 +1,154 @@
+﻿Detailed Rubric
+
+
+Key:
+Frontend
+Backend
+Database
+
+
+Rubric turned in on time (5 points)
+
+
+Languages/Frameworks used (30 points)
+* 10 - Learned/Used React.js frontend
+* 10 - Learned/Used Express.js backend
+* 10 - MongoDB Database (Program Requirements, User Info)
+* 0 - SQL Database (Schools, Departments, Courses)
+
+
+Functionality (60 points)
+* 10 - Users can login and logout
+   * Create account/login page
+   * Password hash and salt
+   * Password validation
+   * Account information storage
+
+
+* 10 - Users can add/remove classes from their 4-year-plan
+   * Search for classes
+   * Drag and drop GUI for classes
+   * Classes are saved to user profile if logged in
+   * Update program requirement completion upon adding class
+   * Store updated completion to user profile if logged in
+   * Display updated changes
+
+
+* 10 - Users can select their major/minor programs and have them saved to their profile
+   * Search for major/minor programs
+   * Save major/minor programs to user profile if logged in (up to 2 majors, 2 minors)
+
+
+* 10 - The application will validate progress in requirements for each program
+   * Retrieve program requirements based on user selected programs
+   * Retrieve user selected courses
+   * Retrieve distribution information for user selected courses
+   * Calculate progress in each requirement based on user-selected courses and distribution information
+   * Display progress in program requirements and progress to be made before completion
+
+
+* 10 - Databases for courses, users, and programs
+
+
+* 10 - Users can search for courses and programs using a series of filters
+   * Manipulate search filters (School, department, keyword, code)
+   * Convert from form content to database searchable queries
+   * Search database content for matches
+   * Convert database content to displayable search content
+   * Display search content to user
+
+
+Best Practices (5 points)
+* 3 - Code is readable and well formatted
+* 2 - All pages pass the html validator
+
+
+
+
+
+
+
+
+
+
+Interface:
+* Class Selection
+   * Should be able to search by names, requirements, etc
+* Current Classes 
+   * In a four year plan organizer
+* Major requirements towards top
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Abridged Rubric
+
+
+Rubric turned in on time (5 points)
+
+
+Languages/Frameworks used (30 points)
+* 10 - Learned/Used React.js frontend
+* 10 - Learned/Used Express.js backend
+* 10 - MongoDB Database (Program Requirements, User Info)
+* 0 - SQL Database (Schools, Departments, Courses)
+Functionality (60 points)
+* 10 - Users can login and logout
+* 10 - Users can add/remove classes from their 4-year-plan
+* 10 - Users can select their major/minor programs and have them saved to their profile
+* 10 - The application will validate progress in requirements for each program
+* 10 - Databases for courses, users, and programs
+* 10 - Users can search for courses and programs using a series of filters
+Best Practices (5 points)
+* 3 - Code is readable and well formatted
+* 2 - All pages pass the html validator
