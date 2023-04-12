@@ -1,0 +1,24 @@
+.side_bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20%; /* Adjust as needed */
+  height: 100%; /* Make navbar full height of viewport */
+  margin-right: 20px; /* Add some space to the right of the navbar */
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  flex: 1;
+  max-height: 50%;
+  overflow-y: scroll;
+}
+.search_section {
+  flex: 1;
+}
+.main {
+  margin-left: 20%;
+  border: 1px solid;
+}

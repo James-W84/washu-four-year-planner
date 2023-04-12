@@ -1,0 +1,5 @@
+.tab_button {
+  position: sticky; /* make the element sticky */
+  top: 0; /* position the element at the top of its container */
+  display: flex;
+}

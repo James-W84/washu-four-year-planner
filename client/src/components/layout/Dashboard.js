@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Tabs from "./Tabs";
 import axios from "axios";
-
+import styles from "../../styles/Dashboard.module.css";
+import SearchBox from "./Searchbox";
+import SearchForm from "./SearchForm";
 function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  //check if user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     if (location.state && location.state.isLoggedIn == true) {
       setIsLoggedIn(location.state.isLoggedIn);
@@ -18,27 +21,30 @@ function Dashboard() {
       navigate("/");
     }
   }, [location.state, navigate]);
+
+  //get user data
   let UserObject = location.state.user.user;
+  console.log(UserObject);
+  //search reults for communicating between searchform and tabs
+  const [searchResults, setSearchResults] = useState([]);
 
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await axios.post("/api/classes/getAll");
-      setData(response.data);
-    }
-    fetchData();
-  }, []);
-  console.log(data);
   return (
-    <div style={{ height: "75vh" }} className="container valign-wrapper">
-      <h1>meep moop college planner loop</h1>
-      <div>
-        {data.map((item) => (
-          <div key={item.id}>{item.name}</div>
-        ))}
+    <div className={styles.container}>
+      <div className={styles.side_bar}>
+        <div className={styles.search_section}>
+          {/* <SearchBox searchAttribute="school_code" />
+          <SearchBox searchAttribute="dept_num" />
+          <SearchBox searchAttribute="dept_code" />
+          <SearchBox searchAttribute="class_num" /> */}
+          <SearchForm onSearch={setSearchResults} />
+        </div>
+        <div className={styles.tabs}>
+          <Tabs searchResults={searchResults} />
+        </div>
       </div>
-      <Tabs />
+      <div className={styles.main}>
+        <h1>Welcome, {UserObject.name}</h1>
+      </div>
     </div>
   );
 }
