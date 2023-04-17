@@ -1,9 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .side_bar {
   position: fixed;
   top: 0;
   left: 0;
   width: 20%; /* Adjust as needed */
-  height: 100%; /* Make navbar full height of viewport */
+  height: 100vh; /* Make navbar full height of viewport */
   margin-right: 20px; /* Add some space to the right of the navbar */
   border: 1px solid;
   display: flex;
@@ -12,7 +19,6 @@
 
 .tabs {
   flex: 1;
-  max-height: 50%;
   overflow-y: scroll;
 }
 .search_section {
@@ -20,5 +26,16 @@
 }
 .main {
   margin-left: 20%;
-  border: 1px solid;
+  margin-top: -30px;
+  height: 100vh;
+  background-color: aliceblue;
+}
+.college_time {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.welcome {
+  text-align: center;
 }

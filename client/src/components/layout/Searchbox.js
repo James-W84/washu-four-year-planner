@@ -25,9 +25,6 @@ function SearchBox(props) {
         searchAttribute: searchAttribute,
         searchText: searchText,
       });
-      console.log(searchAttribute);
-      console.log(searchText);
-      console.log(response);
     }
     fetchData();
   }
