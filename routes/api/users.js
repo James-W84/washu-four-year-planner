@@ -11,6 +11,7 @@ const validateLoginInput = require("../../validation/login");
 
 //Load User model
 const User = require("../../models/User");
+const Program = require("../../models/Program");
 
 router.get("/isAuth", async (req, res) => {
   if (req.session.user) {
@@ -45,7 +46,13 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) => res.json(user))
+            .then((user) => {
+              console.log(user);
+              return res.json({
+                success: true,
+                user: user,
+              });
+            })
             .catch((err) => console.log(err));
         });
       });
@@ -104,4 +111,69 @@ router.post("/login", (req, res) => {
   });
 });
 
+//@route   POST api/classes/update
+//@desc   Update user calsses
+//@access  Public
+router.post("/update", async (req, res) => {
+  try {
+    const { email, semester, classes } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.semesters) {
+      user.semesters = {}; // Initialize semesters if it's undefined
+    }
+    if (!user.semesters[semester]) {
+      user.semesters[semester] = []; // Initialize semester if it's undefined
+    }
+
+    user.semesters[semester] = classes;
+    console.log(user);
+    await user.save();
+
+    res.json({
+      user: user,
+    });
+    return res;
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+//@route   POST api/classes/update
+//@desc   Update user calsses
+//@access  Public
+router.post("/updateProgram", async (req, res) => {
+  try {
+    const { email, programId } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.program) {
+      user.program = {}; // Initialize semesters if it's undefined
+    }
+    const program = await Program.findById(programId);
+    if (!program) {
+      return res.status(404).json({ message: "Program not found" });
+    }
+
+    user.program = program;
+    console.log(user);
+    await user.save();
+
+    res.json({
+      user: user,
+    });
+    return res;
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

@@ -25,7 +25,9 @@ const Register = () => {
       .post("/api/users/register", user)
       .then((res) => {
         console.log(res.data);
-        navigate("/dashboard");
+        navigate("/dashboard",{
+          state: { isLoggedIn: true, user: res.data },
+        });
       })
       .catch((err) => {
         console.log(err.response.data);

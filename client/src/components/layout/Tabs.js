@@ -6,18 +6,16 @@ import Select from "react-select";
 
 function Tabs(props) {
   //get all classes
-  const [data, setData] = useState([]);
+  const [programs, setPrograms] = useState([]);
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.post("/api/classes/getAll");
-      setData(response.data);
+      const response = await axios.post("/api/programs/getAll");
+      console.log(response.data);
+      setPrograms(response.data);
     }
     fetchData();
   }, []);
-  //add class by using state in dashboard
-  function handleAdd(item, term) {
-    props.handleClassAdd(item, term);
-  }
+
   // set selecion optoins
   const options = [
     { value: "FF", label: "Freshman Fall" },
@@ -30,6 +28,7 @@ function Tabs(props) {
     { value: "SrS", label: "Senior Spring" },
   ];
   const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState("");
 
   //get all requirements
   return (
@@ -101,7 +100,7 @@ function Tabs(props) {
                     padding: "5px 10px",
                     cursor: "pointer",
                   }}
-                  onClick={() => handleAdd(item, selectedTerm)}
+                  onClick={() => props.handleClassAdd(item, selectedTerm)}
                 >
                   Add
                 </button>
@@ -109,8 +108,32 @@ function Tabs(props) {
             ))}
           </div>
         </Tab.Panel>
-        <Tab.Panel>Content 2</Tab.Panel>
-        <Tab.Panel>Content 3</Tab.Panel>
+        <Tab.Panel></Tab.Panel>
+        <Tab.Panel>
+          {" "}
+          <Select
+            options={programs.map((program) => ({
+              label: program.name,
+              value: program._id,
+            }))}
+            placeholder="program"
+            // value={selectedTerm}
+            onChange={(selectedOption) => {
+              setSelectedProgram(selectedOption.value);
+              props.selectProgram(selectedOption.value);
+              console.log(selectedOption.value);
+            }}
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                textAlign: "center",
+                fontWeight: "bold",
+                minWidth: "100px",
+                marginRight: "10px",
+              }),
+            }}
+          />
+        </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
   );

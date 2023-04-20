@@ -21,6 +21,43 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  program: {
+    type: Object,
+    default: {},
+  },
+  semesters: {
+    freshmanFall: {
+      type: Object,
+      default: {},
+    },
+    freshmanSpring: {
+      type: Object,
+      default: {},
+    },
+    sophomoreFall: {
+      type: Object,
+      default: {},
+    },
+    sophomoreSpring: {
+      type: Object,
+      default: {},
+    },
+    juniorFall: {
+      type: Object,
+      default: {},
+    },
+    juniorSpring: {
+      type: Object,
+      default: {},
+    },
+    seniorFall: {
+      type: Object,
+      default: {},
+    },
+    seniorSpring: {
+      type: Object,
+      default: {},
+    },
+  },
 });
-
 module.exports = User = mongoose.model("users", UserSchema);

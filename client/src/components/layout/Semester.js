@@ -2,18 +2,20 @@ import React, { useEffect } from "react";
 import styles from "../../styles/Semester.module.css";
 
 function Semester(props) {
-  const { year, season, semester, setSemester } = props;
+  const { year, season, semester, setSemester, sendClassesData } = props;
+  console.log(semester);
+  const key = year.toLowerCase() + season;
   //to remove courses
-  const removeCourse = (setSemester, semester, courseIndex) => {
-    const updatedSemesterData = { ...semester };
-    delete updatedSemesterData[courseIndex];
-    setSemester(updatedSemesterData);
+  const removeCourse = (setSemester, semester, classToRemove) => {
+    const newArray = semester.filter((item) => item !== classToRemove);
+    setSemester(newArray);
+    console.log(newArray);
+    sendClassesData(key, newArray);
   };
 
-  useEffect(() => {
-    console.log(semester);
-  }, [semester]);
-
+  // useEffect(() => {
+  //   console.log("semester changed:", semester);
+  // }, [semester]);
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -23,7 +25,8 @@ function Semester(props) {
       </div>
       <div className={styles.body}>
         {semester &&
-          Object.values(semester).map((item, index) => (
+          semester.length > 0 &&
+          semester.map((item, index) => (
             <div
               key={index}
               style={{
@@ -38,13 +41,13 @@ function Semester(props) {
               <p style={{ fontWeight: "bold" }}>{item.name}</p>
 
               <button
-                class="btn waves-effect waves-light "
+                className="btn waves-effect waves-light "
                 onClick={() => {
-                  removeCourse(setSemester, semester, index);
+                  removeCourse(setSemester, semester, item);
                 }}
                 type="submit"
               >
-                Cancel<i class="material-icons right">cancel</i>
+                Cancel<i className="material-icons right">cancel</i>
               </button>
             </div>
           ))}

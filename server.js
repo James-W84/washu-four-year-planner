@@ -5,6 +5,7 @@ const app = express();
 const passport = require("passport");
 const users = require("./routes/api/users");
 const classes = require("./routes/api/classes");
+const programs = require("./routes/api/programs");
 
 //gets express to use body parser
 app.use(
@@ -30,6 +31,7 @@ require("./config/passport")(passport);
 //Routes
 app.use("/api/users", users);
 app.use("/api/classes", classes);
+app.use("/api/programs", programs);
 
 // we can use process.env.port for Heroku
 const port = process.env.PORT || 5000;
