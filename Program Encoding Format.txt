@@ -1,0 +1,35 @@
+This is the format of JSON I came up with: 
+cse_major = {
+    "name": "Bachelor of Science in Computer Science",
+    "code": "BSCS",
+    "degree": "BS",
+    "school_code": "E",
+    "dept_num": "81",  
+    "dept_code":"CSE",
+    "core_reqs": ['CSE 131', 'CSE 132', 'CSE 247', 
+                ['CSE 240', 'Math 310'], 'CSE 332S', 'CSE 347', 'Math 131', 'Math 132', 'Math 233', 
+                ['Math 309', 'ESE 318'], ['ESE 326', 'Math 3200', 'Math 3211', {'sequence': ['DAT 120', 'DAT 121']}]],
+    "elective_reqs": [
+        {"code": ['CSE ***A', 'CSE ***T', 'CSE ***M', 'CSE ***S'], "credits": 24},
+        {"code": ['CSE ***A', 'CSE ***M'], "credits": 3},
+        {"code": 'CSE ***T', "credits": 3},
+    ],
+    "attributes": [
+
+        {"attr": "AS IQ: NSM", "credits": 8}
+    ]
+}
+
+Degree corresponds to the type of degree being attained and will lead to requirements being chained on from the degree database.
+
+The "core_reqs" array contains all requirements where a specific course or set of courses is specified. 
+- In this array, if an element is a string, it is a required class with no alternatives. 
+- If an element is an array, the array contains all the alternatives for a requirement, such as taking 'CSE 240' OR 'Math 310'. 
+- If an array containing all the alternatives contains an element as an object with the attribute "sequence", then it is an alternative that contains a sequence of classes. 
+- In this example, a student is required to take 'ESE 326', 'Math 3200', or 'Math 3211', or they can choose to take both 'DAT 120' and 'DAT 121'.
+
+The 'elective_reqs' array contains requirements where specific courses are not described, but there is a certain range of courses that would fulfill this requirement. 
+ - The element {"code": ['CSE ***A', 'CSE ***T', 'CSE ***M', 'CSE ***S'], "credits": 24}, for example, means that one is required to take 24 credits of courses that are formatted in any of the above ways. CSE 204A or CSE 332S would both count. 
+
+The "attributes" array contains requirements that are based on attributes of courses. 
+ - Most courses have attributes, and taking a course with an attribute counts towards satisfying the requirement of that attribute. 
