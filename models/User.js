@@ -27,36 +27,36 @@ const UserSchema = new Schema({
   },
   semesters: {
     freshmanFall: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     freshmanSpring: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     sophomoreFall: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     sophomoreSpring: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     juniorFall: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     juniorSpring: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     seniorFall: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
     seniorSpring: {
-      type: Object,
-      default: {},
+      type: Array,
+      default: [],
     },
   },
 });

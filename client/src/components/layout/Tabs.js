@@ -10,7 +10,6 @@ function Tabs(props) {
   useEffect(() => {
     async function fetchData() {
       const response = await axios.post("/api/programs/getAll");
-      console.log(response.data);
       setPrograms(response.data);
     }
     fetchData();
@@ -108,7 +107,9 @@ function Tabs(props) {
             ))}
           </div>
         </Tab.Panel>
-        <Tab.Panel></Tab.Panel>
+        <Tab.Panel>
+          <h1>hi</h1>
+        </Tab.Panel>
         <Tab.Panel>
           {" "}
           <Select

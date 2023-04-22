@@ -21,9 +21,12 @@ const Login = () => {
     axios
       .post("/api/users/login", user)
       .then((res) => {
-        console.log(res.data);
         navigate("/dashboard", {
-          state: { isLoggedIn: true, user: res.data },
+          state: {
+            isLoggedIn: true,
+            token: res.data.token,
+            user_id: res.data.user_id,
+          },
         });
       })
       .catch((err) => {

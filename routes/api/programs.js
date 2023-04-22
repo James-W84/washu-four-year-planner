@@ -7,7 +7,6 @@ const Program = require("../../models/Program");
 // @desc    Return all classes
 // @access  Public
 router.post("/getAll", (req, res) => {
-  console.log("meep");
   Program.find({})
     .limit(100)
     .then((items) => res.json(items))

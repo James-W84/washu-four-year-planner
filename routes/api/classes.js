@@ -21,6 +21,7 @@ router.post("/getAll", (req, res) => {
     .then((items) => res.json(items))
     .catch((err) => res.status(500).json({ error: err.message }));
 });
+
 // @route   POST api/classes/search
 // @desc    Return all classes matching the search
 // @access  Public
@@ -41,7 +42,5 @@ router.post("/search", (req, res) => {
     })
     .catch((err) => res.status(500).json({ error: err.message }));
 });
-
-
 
 module.exports = router;

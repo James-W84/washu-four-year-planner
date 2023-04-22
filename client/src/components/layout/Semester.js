@@ -2,25 +2,24 @@ import React, { useEffect } from "react";
 import styles from "../../styles/Semester.module.css";
 
 function Semester(props) {
-  const { year, season, semester, setSemester, sendClassesData } = props;
-  console.log(semester);
-  const key = year.toLowerCase() + season;
+  const { name, semester, user, setUser, sendClassesData } = props;
+  // console.log(semester);
   //to remove courses
-  const removeCourse = (setSemester, semester, classToRemove) => {
+  const removeCourse = (semester, classToRemove) => {
     const newArray = semester.filter((item) => item !== classToRemove);
-    setSemester(newArray);
-    console.log(newArray);
-    sendClassesData(key, newArray);
+
+    sendClassesData(name, newArray);
   };
 
-  // useEffect(() => {
-  //   console.log("semester changed:", semester);
-  // }, [semester]);
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>
-          This is {year} {season} semester
+          {name
+            .replace(/([A-Z])/g, " $1")
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </h2>
       </div>
       <div className={styles.body}>
@@ -43,11 +42,11 @@ function Semester(props) {
               <button
                 className="btn waves-effect waves-light "
                 onClick={() => {
-                  removeCourse(setSemester, semester, item);
+                  removeCourse(semester, item);
                 }}
                 type="submit"
               >
-                Cancel<i className="material-icons right">cancel</i>
+                Remove<i className="material-icons right">remove</i>
               </button>
             </div>
           ))}

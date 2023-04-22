@@ -12,6 +12,9 @@ const validateLoginInput = require("../../validation/login");
 //Load User model
 const User = require("../../models/User");
 const Program = require("../../models/Program");
+const login = require("../../validation/login");
+
+let csrf_token;
 
 router.get("/isAuth", async (req, res) => {
   if (req.session.user) {
@@ -20,6 +23,7 @@ router.get("/isAuth", async (req, res) => {
     return res.status(401).json("unauthorize");
   }
 });
+
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -47,13 +51,12 @@ router.post("/register", (req, res) => {
           newUser
             .save()
             .then((user) => {
-              console.log(user);
               return res.json({
                 success: true,
                 user: user,
               });
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.error(err));
         });
       });
     }
@@ -63,7 +66,6 @@ router.post("/register", (req, res) => {
 // @route   POST api/users/login
 // @desc    Login user and return JWT token
 // @access  Public
-
 router.post("/login", (req, res) => {
   // Form validation
   const { errors, isValid } = validateLoginInput(req.body);
@@ -98,8 +100,9 @@ router.post("/login", (req, res) => {
             res.json({
               success: true,
               token: "Bearer " + token,
-              user: user,
+              user_id: user._id,
             });
+            csrf_token = token;
           }
         );
       } else {
@@ -111,13 +114,24 @@ router.post("/login", (req, res) => {
   });
 });
 
-//@route   POST api/classes/update
-//@desc   Update user calsses
+//@route   POST api/users/getUser
+//@desc   Retrieve user information
+//@access  Public
+router.post("/getUser", (req, res) => {
+  // if (req.body.token != csrf_token) {
+  //   return res.status(404).json({ message: "Invalid CSRF token" });
+  // }
+  User.findOne({ _id: req.body.user_id }).then((user) => {
+    res.json(user);
+  });
+});
+
+//@route   POST api/users/update
+//@desc   Update user classes
 //@access  Public
 router.post("/update", async (req, res) => {
   try {
     const { email, semester, classes } = req.body;
-    console.log(req.body);
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -129,11 +143,9 @@ router.post("/update", async (req, res) => {
     if (!user.semesters[semester]) {
       user.semesters[semester] = []; // Initialize semester if it's undefined
     }
-
-    user.semesters[semester] = classes;
-    console.log(user);
+    console.log(req.body.classes);
+    user.semesters[semester] = req.body.classes;
     await user.save();
-
     res.json({
       user: user,
     });
@@ -143,13 +155,13 @@ router.post("/update", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-//@route   POST api/classes/update
-//@desc   Update user calsses
+
+//@route   POST api/users/update
+//@desc   Update user classes
 //@access  Public
 router.post("/updateProgram", async (req, res) => {
   try {
     const { email, programId } = req.body;
-    console.log(req.body);
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -164,7 +176,6 @@ router.post("/updateProgram", async (req, res) => {
     }
 
     user.program = program;
-    console.log(user);
     await user.save();
 
     res.json({
