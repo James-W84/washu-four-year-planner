@@ -30,7 +30,7 @@ const ProgramSchema = new Schema({
     required: true,
   },
   core_reqs: {
-    type: [[String]],
+    type: Array,
     default: [],
   },
   elective_reqs: {

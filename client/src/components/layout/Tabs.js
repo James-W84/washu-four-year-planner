@@ -7,9 +7,26 @@ import Select from "react-select";
 function Tabs(props) {
   //get all classes
   const [programs, setPrograms] = useState([]);
+  const [loadingReqs, setLoadingReqs] = useState(true);
+  const [coreReqs, setCoreReqs] = useState([]);
+  const [electiveReqs, setElectiveReqs] = useState([]);
+
+  async function validateRequirements() {
+    const response = await axios.post("api/users/validateRequirements", {
+      user_id: props.user_id,
+    });
+    setCoreReqs(response.data.incomplete_core);
+    setElectiveReqs(
+      response.data.incomplete_elective.concat(
+        response.data.incomplete_distribution
+      )
+    );
+    setLoadingReqs(false);
+  }
+
   useEffect(() => {
     async function fetchData() {
-      const response = await axios.post("/api/programs/getAll");
+      const response = await axios.post("/api/programs/getAll/");
       setPrograms(response.data);
     }
     fetchData();
@@ -27,7 +44,7 @@ function Tabs(props) {
     { value: "SrS", label: "Senior Spring" },
   ];
   const [selectedTerm, setSelectedTerm] = useState("");
-  const [selectedProgram, setSelectedProgram] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState(""); //Name of selected program
 
   //get all requirements
   return (
@@ -36,18 +53,27 @@ function Tabs(props) {
         <Tab
           className="waves-effect waves-light btn"
           style={{ fontSize: "11px" }}
+          onClick={() => {
+            setLoadingReqs(true);
+          }}
         >
           Course Search
         </Tab>
         <Tab
           className="waves-effect waves-light btn"
           style={{ fontSize: "11px" }}
+          onClick={() => {
+            validateRequirements();
+          }}
         >
           Requirements
         </Tab>
         <Tab
           className="waves-effect waves-light btn"
           style={{ fontSize: "11px" }}
+          onClick={() => {
+            setLoadingReqs(true);
+          }}
         >
           Program Search
         </Tab>
@@ -108,7 +134,35 @@ function Tabs(props) {
           </div>
         </Tab.Panel>
         <Tab.Panel>
-          <h1>hi</h1>
+          {loadingReqs ? (
+            <b>Loading...</b>
+          ) : (
+            <>
+              <b>Core Requirements still Missing:</b>
+              {coreReqs.map((req) => {
+                return <p>{JSON.stringify(req)}</p>;
+              })}
+              <b>Elective Requirements still Missing</b>
+              {electiveReqs.map((req) => {
+                let str;
+                if (req.code) {
+                  str = JSON.stringify(req.code);
+                } else if (req.attr) {
+                  str = JSON.stringify(req.attr);
+                }
+                return (
+                  <p>
+                    {str +
+                      "; Credits Remaining: " +
+                      req.credits +
+                      (req.min_level
+                        ? "; Minimum level: " + req.min_level
+                        : "")}
+                  </p>
+                );
+              })}
+            </>
+          )}
         </Tab.Panel>
         <Tab.Panel>
           {" "}
@@ -117,12 +171,10 @@ function Tabs(props) {
               label: program.name,
               value: program._id,
             }))}
-            placeholder="program"
-            // value={selectedTerm}
+            placeholder={props.program.name}
             onChange={(selectedOption) => {
               setSelectedProgram(selectedOption.value);
               props.selectProgram(selectedOption.value);
-              console.log(selectedOption.value);
             }}
             styles={{
               control: (provided) => ({

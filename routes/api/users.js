@@ -12,7 +12,18 @@ const validateLoginInput = require("../../validation/login");
 //Load User model
 const User = require("../../models/User");
 const Program = require("../../models/Program");
+const Degree = require("../../models/Degree");
+const Class = require("../../models/Class");
 const login = require("../../validation/login");
+
+//Helper functions
+function check_elective(elective, course) {
+  let regex = elective.replace(/\*/g, "[\\w\\d]");
+
+  regex = new RegExp("^" + regex + "$");
+
+  return regex.test(course);
+}
 
 let csrf_token;
 
@@ -168,7 +179,7 @@ router.post("/updateProgram", async (req, res) => {
     }
 
     if (!user.program) {
-      user.program = {}; // Initialize semesters if it's undefined
+      user.program = {};
     }
     const program = await Program.findById(programId);
     if (!program) {
@@ -187,4 +198,247 @@ router.post("/updateProgram", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
+//@route   POST api/users/validateRequirements
+//@desc   Send information about user requirement completion
+//@access  Public
+router.post("/validateRequirements", async (req, res) => {
+  User.findOne({ _id: req.body.user_id }).then((user) => {
+    let program = user.program;
+    let degree_code = program.degree;
+    let courses = Object.values(user.semesters).flatMap((arr) => arr);
+
+    let incomplete_core = [];
+    let incomplete_elective = [];
+    let incomplete_distribution = [];
+
+    let classes = courses.map(function (c) {
+      return c.dept_code + " " + c.class_num;
+    });
+    let credits = courses.map(function (c) {
+      return parseInt(c.credit_units);
+    });
+    let attributes = courses.map(function (c) {
+      return c.distributions;
+    });
+
+    Degree.findOne({ code: degree_code }).then((degree) => {
+      //Add program requirements to degree requirements
+      let core_reqs = program.core_reqs.concat(degree.core_reqs);
+      let elective_reqs = program.elective_reqs.concat(degree.elective_reqs);
+      let distribution_reqs = program.attributes.concat(degree.attributes);
+
+      //Core requirements
+      core_reqs.forEach((req) => {
+        if (typeof req == "string") {
+          //Single core class
+          let idx = classes.indexOf(req);
+          if (idx > -1) {
+            classes.splice(idx, 1);
+            credits.splice(idx, 1);
+            attributes.splice(idx, 1);
+          } else {
+            incomplete_core.push(req);
+          }
+        } else {
+          //Options for core class
+          let validated = false;
+          req.every((opt) => {
+            if (typeof opt == "string") {
+              let idx = classes.indexOf(opt);
+              if (idx > -1) {
+                classes.splice(idx, 1);
+                credits.splice(idx, 1);
+                attributes.splice(idx, 1);
+                validated = true;
+                return false;
+              }
+            } else {
+              //One option for core requirement is a sequence of classes
+              if (opt.sequence) {
+                let validate_sequence = true;
+                opt.sequence.forEach((crs) => {
+                  let idx = classes.indexOf(crs);
+                  if (idx < 0) {
+                    validate_sequence = false;
+                  } else {
+                    classes.splice(idx, 1);
+                    credits.splice(idx, 1);
+                    attributes.splice(idx, 1);
+                  }
+                });
+                if (validate_sequence) {
+                  validated = true;
+                  return false;
+                }
+              }
+            }
+            return true;
+          });
+          if (!validated) {
+            incomplete_core.push(req);
+          }
+        }
+      });
+
+      //Elective requirements
+      elective_reqs.sort((a, b) => {
+        if (a.validator === b.validator) {
+          return b.credits - a.credits;
+        } else if (a.validator) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+      let classes_validator = []; //Checking validator requirements
+      let classes_validator_creds = [];
+      elective_reqs.forEach((req) => {
+        let req_credits = req.credits;
+        let opts = req.code;
+        if (!req.validator) {
+          if (typeof opts == "string") {
+            classes.forEach((crs, index) => {
+              if (check_elective(opts, crs)) {
+                req_credits -= credits[index];
+                classes_validator.push(crs);
+                classes_validator_creds.push(credits[index]);
+              }
+            });
+          } else {
+            opts.forEach((opt) => {
+              classes.forEach((crs, index) => {
+                if (check_elective(opt, crs)) {
+                  req_credits -= credits[index];
+                  classes_validator.push(crs);
+                  classes_validator_creds.push(credits[index]);
+                }
+              });
+            });
+          }
+        } else {
+          if (typeof opts == "string") {
+            classes_validator.forEach((crs, index) => {
+              if (check_elective(opts, crs)) {
+                if (req.min_level) {
+                  let level = crs.match(/\d+/g)[0];
+                  if (level >= req.min_level) {
+                    req_credits -= classes_validator_creds[index];
+                  }
+                } else {
+                  req_credits -= classes_validator_creds[index];
+                }
+              }
+            });
+          } else {
+            opts.forEach((opt) => {
+              classes_validator.forEach((crs, index) => {
+                if (check_elective(opt, crs)) {
+                  if (req.min_level) {
+                    let level = crs.match(/\d+/g)[0];
+                    if (level >= req.min_level) {
+                      req_credits -= classes_validator_creds[index];
+                    }
+                  } else {
+                    req_credits -= classes_validator_creds[index];
+                  }
+                }
+              });
+            });
+          }
+        }
+        if (req_credits > 0) {
+          req.credits = req_credits;
+          incomplete_elective.push(req);
+        }
+      });
+
+      //Attributes/distribution requirements
+      distribution_reqs.sort((a, b) => {
+        if (a.validator === b.validator) {
+          return b.credits - a.credits;
+        } else if (a.validator) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+      let attribute_class_validator = [];
+      let attributes_validator = [];
+      let attributes_validator_creds = [];
+      distribution_reqs.forEach((req) => {
+        let req_credits = req.credits;
+        let opts = req.attr;
+        if (!req.validator) {
+          if (typeof opts == "string") {
+            let [type, attr] = opts.split(": ");
+            attributes.forEach((att, index) => {
+              if (att && att[type] && att[type].indexOf(attr) > -1) {
+                attribute_class_validator.push(classes[index]);
+                attributes_validator.push(att);
+                attributes_validator_creds.push(credits[index]);
+                req_credits -= credits[index];
+              }
+            });
+          } else {
+            opts.forEach((opt) => {
+              let [type, attr] = opt.split(": ");
+              attributes.forEach((att, index) => {
+                if (att && att[type] && att[type].indexOf(attr) > -1) {
+                  attribute_class_validator.push(classes[index]);
+                  attributes_validator.push(att);
+                  attributes_validator_creds.push(credits[index]);
+                  req_credits -= credits[index];
+                }
+              });
+            });
+          }
+        } else {
+          if (typeof opts == "string") {
+            let [type, attr] = opts.split(": ");
+            attributes_validator.forEach((att, index) => {
+              if (att && att[type] && att[type].indexOf(attr) > -1) {
+                if (req.min_level) {
+                  let level = attribute_class_validator[index].match(/\d+/g)[0];
+                  if (level >= req.min_level) {
+                    req_credits -= classes_validator_creds[index];
+                  }
+                } else {
+                  req_credits -= classes_validator_creds[index];
+                }
+              }
+            });
+          } else {
+            opts.forEach((opt) => {
+              let [type, attr] = opt.split(": ");
+              attributes_validator.forEach((att, index) => {
+                if (att && att[type] && att[type].indexOf(attr) > -1) {
+                  if (req.min_level) {
+                    let level =
+                      attribute_class_validator[index].match(/\d+/g)[0];
+                    if (level >= req.min_level) {
+                      req_credits -= classes_validator_creds[index];
+                    }
+                  } else {
+                    req_credits -= classes_validator_creds[index];
+                  }
+                }
+              });
+            });
+          }
+        }
+        if (req_credits > 0) {
+          req.credits = req_credits;
+          incomplete_distribution.push(req);
+        }
+      });
+      res.json({
+        incomplete_core: incomplete_core,
+        incomplete_elective: incomplete_elective,
+        incomplete_distribution: incomplete_distribution,
+      });
+    });
+  });
+});
+
 module.exports = router;

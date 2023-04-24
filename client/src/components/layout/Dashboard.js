@@ -52,7 +52,7 @@ function Dashboard() {
     } else {
       navigate("/");
     }
-  }, [navigate]);
+  }, [location.state, navigate]);
 
   async function sendClassesData(sem, semInfo) {
     const response = await axios
@@ -107,6 +107,8 @@ function Dashboard() {
             selectProgram={selectProgram}
             handleClassAdd={handleClassAdd}
             searchResults={searchResults}
+            user_id={location.state.user_id}
+            program={user.program}
           />
         </div>
       </div>
