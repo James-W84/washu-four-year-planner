@@ -171,7 +171,9 @@ function Tabs(props) {
               label: program.name,
               value: program._id,
             }))}
-            placeholder={props.program.name}
+            placeholder={
+              props.program && props.program.name ? props.program.name : ""
+            }
             onChange={(selectedOption) => {
               setSelectedProgram(selectedOption.value);
               props.selectProgram(selectedOption.value);
