@@ -62,9 +62,11 @@ router.post("/register", (req, res) => {
           newUser
             .save()
             .then((user) => {
-              return res.json({
+              return res.status(201).json({
                 success: true,
-                user: user,
+                name: user.name,
+
+                user_id: user._id,
               });
             })
             .catch((err) => console.error(err));
@@ -132,9 +134,12 @@ router.post("/getUser", (req, res) => {
   // if (req.body.token != csrf_token) {
   //   return res.status(404).json({ message: "Invalid CSRF token" });
   // }
-  User.findOne({ _id: req.body.user_id }).then((user) => {
-    res.json(user);
-  });
+  User.findOne({ _id: req.body.user_id })
+    .then((user) => {
+      console.log(user);
+      res.json(user);
+    })
+    .catch((err) => console.error(err));
 });
 
 //@route   POST api/users/update

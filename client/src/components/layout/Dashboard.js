@@ -53,7 +53,7 @@ function Dashboard() {
       navigate("/");
     }
   }, [location.state, navigate]);
-
+  useEffect(() => {}, [user]);
   async function sendClassesData(sem, semInfo) {
     const response = await axios
       .post("/api/users/update", {
@@ -108,7 +108,7 @@ function Dashboard() {
             handleClassAdd={handleClassAdd}
             searchResults={searchResults}
             user_id={location.state.user_id}
-            program={user.program}
+            program={user?.program || { defaultProgram: true }}
           />
         </div>
       </div>
