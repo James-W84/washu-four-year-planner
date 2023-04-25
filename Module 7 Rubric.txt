@@ -14,7 +14,6 @@ Languages/Frameworks used (30 points)
 * 10 - Learned/Used React.js frontend
 * 10 - Learned/Used Express.js backend
 * 10 - MongoDB Database (Program Requirements, User Info)
-* 0 - SQL Database (Schools, Departments, Courses)
 
 
 Functionality (60 points)
@@ -27,10 +26,7 @@ Functionality (60 points)
 
 * 10 - Users can add/remove classes from their 4-year-plan
    * Search for classes
-   * Drag and drop GUI for classes
    * Classes are saved to user profile if logged in
-   * Update program requirement completion upon adding class
-   * Store updated completion to user profile if logged in
    * Display updated changes
 
 
@@ -51,7 +47,7 @@ Functionality (60 points)
 
 
 * 10 - Users can search for courses and programs using a series of filters
-   * Manipulate search filters (School, department, keyword, code)
+   * Manipulate search filters (School, department, code)
    * Convert from form content to database searchable queries
    * Search database content for matches
    * Convert database content to displayable search content
@@ -61,14 +57,6 @@ Functionality (60 points)
 Best Practices (5 points)
 * 3 - Code is readable and well formatted
 * 2 - All pages pass the html validator
-
-
-
-
-
-
-
-
 
 
 Interface:
@@ -82,9 +70,7 @@ Interface:
 
 Abridged Rubric
 
-
 Rubric turned in on time (5 points)
-
 
 Languages/Frameworks used (30 points)
 * 10 - Learned/Used React.js frontend
