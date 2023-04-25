@@ -106,6 +106,22 @@ function Dashboard() {
           <SearchForm onSearch={setSearchResults} />
         </div>
         <div className={styles.tabs}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              margin: "10px 0",
+            }}
+          >
+            <button
+              onClick={() => navigate("/")}
+              className="btn waves-effect waves-light"
+              style={{ margin: "0 0px 10px 0px" }}
+            >
+              Logout
+            </button>
+          </div>
+
           <Tabs
             selectProgram={selectProgram}
             handleClassAdd={handleClassAdd}
@@ -121,7 +137,6 @@ function Dashboard() {
             Welcome,<b> {user.name}</b>
           </h1>
         </div>
-
         <div className={styles.college_time}>
           {Object.entries(user.semesters).map(([key, value]) => {
             return (
