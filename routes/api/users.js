@@ -214,8 +214,9 @@ router.post("/updateProgram", async (req, res) => {
 //@desc   Send information about user requirement completion
 //@access  Public
 router.post("/validateRequirements", async (req, res) => {
+  console.log(req);
   User.findOne({ _id: req.body.user_id }).then((user) => {
-    let program = user.program;
+    let program = user.program ? user.program : null;
     let degree_code = program.degree;
     let courses = Object.values(user.semesters).flatMap((arr) => arr);
 

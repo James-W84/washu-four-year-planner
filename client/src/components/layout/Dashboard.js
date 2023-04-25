@@ -110,8 +110,8 @@ function Dashboard() {
             selectProgram={selectProgram}
             handleClassAdd={handleClassAdd}
             searchResults={searchResults}
-            user_id={location.state.user_id}
-            program={user?.program || { defaultProgram: true }}
+            user_id={location.state.user.user_id}
+            program={user.program}
           />
         </div>
       </div>
