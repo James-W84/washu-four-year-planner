@@ -39,13 +39,16 @@ function Dashboard() {
   //for when user logs in/ tries to illegally access
   useEffect(() => {
     async function fetchData() {
+      console.log(location.state);
       const response = await axios.post("/api/users/getUser", {
         token: location.state.token,
-        user_id: location.state.user_id,
+
+        user_id: location.state.user.user_id,
       });
       setUser(response.data);
       setLoading(false);
     }
+
     if (location.state && location.state.isLoggedIn) {
       setIsLoggedIn(location.state.isLoggedIn);
       fetchData();

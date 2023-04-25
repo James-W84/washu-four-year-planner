@@ -104,6 +104,10 @@ router.post("/login", (req, res) => {
           name: user.name,
           email: user.email,
         };
+        const usert = {
+          name: user.name,
+          user_id: user._id,
+        };
         // Sign token
         jwt.sign(
           payload,
@@ -113,7 +117,7 @@ router.post("/login", (req, res) => {
             res.json({
               success: true,
               token: "Bearer " + token,
-              user_id: user._id,
+              user: usert,
             });
             csrf_token = token;
           }
@@ -137,6 +141,8 @@ router.post("/getUser", (req, res) => {
   User.findOne({ _id: req.body.user_id })
     .then((user) => {
       console.log(user);
+      console.log(req);
+
       res.json(user);
     })
     .catch((err) => console.error(err));

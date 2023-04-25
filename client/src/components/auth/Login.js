@@ -25,7 +25,7 @@ const Login = () => {
           state: {
             isLoggedIn: true,
             token: res.data.token,
-            user_id: res.data.user_id,
+            user: res.data.user,
           },
         });
       })
